@@ -94,7 +94,8 @@ Deno.serve(async (req) => {
     // Moderator unreachable / unparseable: fail safe — hold unpublished for a human.
     await supa.from("messages").insert({ text: clean, approved: false });
     return json({ approved: false, pending: true });
-  } catch (_e) {
+  } catch (e) {
+    console.error("Top-level handler error:", e);
     return json({ approved: false, reason: "Something went wrong — try again." }, 500);
   }
 });
@@ -119,7 +120,12 @@ async function moderate(text: string): Promise<Verdict> {
   const base = Deno.env.get("MODERATION_BASE_URL");
   const key = Deno.env.get("MODERATION_API_KEY");
   const model = Deno.env.get("MODERATION_MODEL");
-  if (!base || !key || !model) return { status: "error" };
+  if (!base || !key || !model) {
+    console.error("MODERATION secrets missing:", {
+      hasBase: !!base, hasKey: !!key, hasModel: !!model,
+    });
+    return { status: "error" };
+  }
 
   try {
     const res = await fetch(`${base.replace(/\/+$/, "")}/chat/completions`, {
@@ -145,16 +151,28 @@ async function moderate(text: string): Promise<Verdict> {
       }),
     });
 
-    if (!res.ok) return { status: "error" };
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => "(could not read body)");
+      console.error("Moderation provider returned non-OK status:", res.status, errBody);
+      return { status: "error" };
+    }
 
     const data = await res.json();
     const raw = data?.choices?.[0]?.message?.content ?? "";
-    const parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
+    let parsed: { approved?: boolean; reason?: string };
+    try {
+      parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
+    } catch (parseErr) {
+      console.error("Could not parse moderation JSON. Raw content was:", raw, parseErr);
+      return { status: "error" };
+    }
 
     if (parsed.approved === true) return { status: "approved" };
     if (parsed.approved === false) return { status: "rejected", reason: parsed.reason };
+    console.error("Moderation response had no usable 'approved' field:", parsed);
     return { status: "error" };
-  } catch {
+  } catch (fetchErr) {
+    console.error("Moderation fetch threw an exception:", fetchErr);
     return { status: "error" };
   }
 }
