@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Kind Words, London</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
+
+  :root {
+    --ink: #2A1A3E;
+    --ink-soft: #5A4A6E;
+    --paper: #FFF7F2;
+    --paper-edge: #F3E6DC;
+    --sun: #FFC24B;
+    --go: #2FB37A;
+    --go-deep: #1F8E60;
+    --coral: #FF5C8A;
+    --serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    --radius: 28px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; font-family: var(--serif); color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px 18px 40px;
+    background: linear-gradient(125deg, #FF8A5B, #FF5C8A 38%, #7A5CFF 74%, #5BC8FF);
+    background-size: 280% 280%; animation: drift 26s ease infinite; overflow-x: hidden;
+  }
+  @keyframes drift { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+  .orb { position: fixed; border-radius: 50%; filter: blur(6px); opacity: .35; pointer-events: none; mix-blend-mode: soft-light; animation: bob 14s ease-in-out infinite; }
+  .orb.a { width:220px;height:220px;background:var(--sun);top:-60px;left:-40px; }
+  .orb.b { width:300px;height:300px;background:#fff;bottom:-120px;right:-80px;animation-delay:-5s; }
+  .orb.c { width:140px;height:140px;background:var(--coral);top:30%;right:8%;animation-delay:-9s; }
+  @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-26px);} }
+  .stage { width:100%; max-width:480px; position:relative; z-index:2; }
+  .masthead { text-align:center; margin-bottom:22px; color:#fff; }
+  .masthead h1 { font-size:clamp(34px,9vw,46px); font-weight:600; margin:0; letter-spacing:-0.5px; text-shadow:0 2px 18px rgba(42,26,62,.22); }
+  .masthead p { margin:6px 0 0; font-size:15px; font-weight:400; opacity:.92; font-variation-settings:"opsz" 12; }
+  .card-wrap { perspective:1600px; }
+  .card { position:relative; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.6,.05,.2,1); min-height:360px; }
+  .card.flipped { transform:rotateY(180deg); }
+  .face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:var(--paper); border-radius:var(--radius); padding:30px 28px 26px; box-shadow:0 24px 60px -22px rgba(42,26,62,.5), 0 2px 0 var(--paper-edge); display:flex; flex-direction:column; }
+  .face.back { transform:rotateY(180deg); }
+  .eyebrow { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); font-weight:600; display:flex; align-items:center; gap:8px; margin-bottom:18px; }
+  .eyebrow::before { content:""; width:9px; height:9px; border-radius:50%; background:var(--sun); box-shadow:0 0 0 4px rgba(255,194,75,.25); }
+  .message { flex:1; display:flex; align-items:center; }
+  .message blockquote { margin:0; font-size:clamp(23px,6.4vw,30px); line-height:1.32; font-weight:500; font-variation-settings:"opsz" 60; color:var(--ink); }
+  .message.enter blockquote { animation:unfold .65s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes unfold { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
+  .provenance { margin-top:18px; font-size:14px; color:var(--ink-soft); font-style:italic; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:20px; }
+  .report { font-family:var(--serif); font-style:normal; font-size:12px; color:var(--ink-soft); background:none; border:none; padding:4px 2px; cursor:pointer; opacity:.65; text-decoration:underline; text-underline-offset:3px; flex:0 0 auto; }
+  .report:hover { opacity:1; color:var(--coral); }
+  .report[hidden] { display:none; }
+  .actions { margin-top:22px; display:flex; flex-direction:column; gap:11px; }
+  button { font-family:var(--serif); font-size:17px; font-weight:600; border:none; border-radius:999px; padding:15px 22px; cursor:pointer; transition:transform .12s ease, box-shadow .2s ease, background .2s ease; -webkit-tap-highlight-color:transparent; }
+  button:active { transform:translateY(2px) scale(.99); }
+  button:focus-visible { outline:3px solid var(--ink); outline-offset:3px; }
+  .btn-primary { background:var(--ink); color:#fff; box-shadow:0 10px 22px -8px rgba(42,26,62,.6); }
+  .btn-primary:hover { background:#3a2654; }
+  .btn-ghost { background:transparent; color:var(--ink); box-shadow:inset 0 0 0 2px rgba(42,26,62,.18); }
+  .btn-ghost:hover { box-shadow:inset 0 0 0 2px rgba(42,26,62,.4); }
+  .btn-go { background:var(--go); color:#fff; box-shadow:0 10px 22px -8px rgba(47,179,122,.7); }
+  .btn-go:hover { background:var(--go-deep); }
+  .btn-go:disabled { opacity:.55; cursor:not-allowed; }
+  .back h2 { font-size:22px; font-weight:600; margin:0 0 4px; }
+  .back .hint { font-size:14px; color:var(--ink-soft); margin:0 0 14px; }
+  textarea { font-family:var(--serif); font-size:19px; line-height:1.4; color:var(--ink); width:100%; flex:1; border:2px solid var(--paper-edge); border-radius:18px; padding:16px; resize:none; background:#fffdfb; transition:border-color .2s ease; }
+  textarea:focus { outline:none; border-color:var(--sun); }
+  .meta-row { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+  .counter { font-size:13px; color:var(--ink-soft); }
+  .status { font-size:14px; min-height:20px; margin-top:4px; }
+  .status.bad { color:#C0392B; }
+  .status.good { color:var(--go-deep); }
+  .status.busy { color:var(--ink-soft); }
+  .footnote { text-align:center; color:#fff; opacity:.9; font-size:13px; margin-top:20px; line-height:1.5; }
+  .footnote span { font-weight:600; }
+  @media (prefers-reduced-motion: reduce) {
+    body, .orb { animation:none; }
+    .card { transition:none; }
+    .message.enter blockquote { animation:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <div class="orb c"></div>
+
+  <main class="stage">
+    <div class="masthead">
+      <h1>Kind Words</h1>
+      <p>Anonymous kindness, left by one Londoner for the next.</p>
+    </div>
+
+    <div class="card-wrap">
+      <div class="card" id="card">
+        <section class="face front" aria-label="A kind word from a stranger">
+          <div class="eyebrow">From a stranger in London</div>
+          <div class="message" id="msgBox" aria-live="polite">
+            <blockquote id="msgText">Unfolding a kind word…</blockquote>
+          </div>
+          <div class="provenance">
+            <span id="prov"></span>
+            <button class="report" id="reportBtn" type="button" hidden>Report this</button>
+          </div>
+          <div class="actions">
+            <button class="btn-ghost" id="anotherBtn" type="button">Show me another</button>
+            <button class="btn-primary" id="passBtn" type="button">Pass on a kind word</button>
+          </div>
+        </section>
+
+        <section class="face back" aria-label="Write a kind word">
+          <div class="eyebrow">For the next person</div>
+          <h2>Leave something kind</h2>
+          <p class="hint">Write to a stranger you'll never meet. Keep it warm — it's checked before it's passed on.</p>
+          <textarea id="input" maxlength="280" placeholder="On whatever bus or bench you're reading this…"></textarea>
+          <div class="meta-row">
+            <span class="counter" id="counter">0 / 280</span>
+            <button class="btn-ghost" id="backBtn" type="button" style="padding:8px 16px;font-size:14px;">Back</button>
+          </div>
+          <div class="status" id="status" aria-live="polite"></div>
+          <div class="actions">
+            <button class="btn-go" id="sendBtn" type="button">Send it on</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <p class="footnote">No names, no logins, nothing tracked. <span>Every message is checked for kindness before anyone sees it.</span></p>
+  </main>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  // ===========================================================================
+  //  FILL THESE IN  (Settings → API in your Supabase dashboard)
+  // ===========================================================================
+  const CONFIG = {
+    SUPABASE_URL:  'https://YOUR-PROJECT-REF.supabase.co',
+    SUPABASE_KEY:  'YOUR-PUBLISHABLE-OR-ANON-KEY',   // public + RLS-protected; safe to commit
+    SUBMIT_URL:    'https://YOUR-PROJECT-REF.supabase.co/functions/v1/submit',
+  };
+  // ===========================================================================
+
+  const sb = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+
+  const el = id => document.getElementById(id);
+  const card = el('card'), msgText = el('msgText'), msgBox = el('msgBox'), prov = el('prov');
+  const input = el('input'), counter = el('counter'), status = el('status'), sendBtn = el('sendBtn');
+  const reportBtn = el('reportBtn');
+  let lastId = null;
+
+  function setMessage(text, line, reportable) {
+    msgText.textContent = text;
+    prov.textContent = line || '';
+    reportBtn.hidden = !reportable;
+    msgBox.classList.remove('enter');
+    void msgBox.offsetWidth;
+    msgBox.classList.add('enter');
+  }
+
+  async function showRandom() {
+    try {
+      const { data, error } = await sb.rpc('get_random_message', { exclude_id: lastId });
+      if (error) throw error;
+      if (!data || !data.length) {
+        setMessage('Be the very first. Pass on a kind word and the next person will find it here.', '', false);
+        return;
+      }
+      const m = data[0];
+      lastId = m.id;
+      setMessage(m.text, 'Left for whoever came next.', true);
+    } catch (e) {
+      setMessage("Couldn't reach the wall just now. Tap to try again.", '', false);
+    }
+  }
+
+  async function report() {
+    if (!lastId) return;
+    if (!confirm('Report this message as unkind or inappropriate? It will be hidden while someone checks it.')) return;
+    const id = lastId;
+    reportBtn.hidden = true;
+    try {
+      await sb.rpc('report_message', { msg_id: id });
+    } catch (e) { /* fail quietly — still move them on */ }
+    setMessage('Thanks for flagging that. Here\u2019s another.', '', false);
+    lastId = id;            // exclude the reported one from the next pull
+    setTimeout(showRandom, 1100);
+  }
+
+  async function send() {
+    const text = input.value.trim();
+    if (text.length < 3) { status.className = 'status bad'; status.textContent = 'A little too short — add a few more words.'; return; }
+
+    sendBtn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = "Checking it's kind…";
+
+    try {
+      const res = await fetch(CONFIG.SUBMIT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': CONFIG.SUPABASE_KEY,
+        },
+        body: JSON.stringify({ text }),
+      });
+      const v = await res.json();
+
+      if (v.approved) {
+        finishOk('Folded up and passed on. Thank you.', true);
+      } else if (v.pending) {
+        finishOk("Received — a person will check it before it's passed on.", false);
+      } else {
+        status.className = 'status bad';
+        status.textContent = v.reason || "Let's keep it kind — try rephrasing.";
+        sendBtn.disabled = false;
+      }
+    } catch (e) {
+      status.className = 'status bad';
+      status.textContent = "Couldn't send just now — try once more.";
+      sendBtn.disabled = false;
+    }
+  }
+
+  function finishOk(msg, refresh) {
+    status.className = 'status good';
+    status.textContent = msg;
+    input.value = '';
+    counter.textContent = '0 / 280';
+    sendBtn.disabled = false;
+    setTimeout(() => {
+      flip(false);
+      status.textContent = ''; status.className = 'status';
+      if (refresh) showRandom();
+    }, 1400);
+  }
+
+  function flip(toBack) {
+    card.classList.toggle('flipped', toBack);
+    if (toBack) setTimeout(() => input.focus(), 400);
+  }
+
+  el('anotherBtn').addEventListener('click', showRandom);
+  reportBtn.addEventListener('click', report);
+  el('passBtn').addEventListener('click', () => flip(true));
+  el('backBtn').addEventListener('click', () => { flip(false); status.textContent = ''; status.className = 'status'; });
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('input', () => { counter.textContent = input.value.length + ' / 280'; });
+
+  showRandom();
+</script>
+</body>
+</html>
