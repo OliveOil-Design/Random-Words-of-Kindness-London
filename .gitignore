@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.env.*
+*.local
+.branches
+.temp
+supabase/.temp
+.vscode/
+.idea/
+node_modules/
